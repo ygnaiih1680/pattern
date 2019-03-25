@@ -33,7 +33,6 @@ public class DrawingPanel extends JPanel {
 	}
 
 	public void draw(Graphics2D g2d) {
-		this.shapeA.setGraphics2D(g2d);
 		this.shapeA.draw();
 	}
 
@@ -103,10 +102,7 @@ public class DrawingPanel extends JPanel {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			repaint();
-			if (e.getClickCount() == 1)
-				shapeA.addPoint();
-			else if (e.getClickCount() == 2)
+			if (e.getClickCount() == 2 && shapeA instanceof PolygonA)
 				complete();
 		}
 
@@ -117,9 +113,14 @@ public class DrawingPanel extends JPanel {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			if (shapeA instanceof PolygonA) return;
-			complete();
-			repaint();
+			if (shapeA instanceof PolygonA) {
+				shapeA.addPoint();
+				repaint();
+			} else {
+				complete();
+				repaint();
+			}
+
 		}
 
 		@Override
@@ -132,13 +133,13 @@ public class DrawingPanel extends JPanel {
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			repaint();
 			shapeA.setEnd(e.getPoint());
+			repaint();
 		}
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			if (shapeA instanceof PolygonA) {
+			if(shapeA instanceof PolygonA) {
 				shapeA.setEnd(e.getPoint());
 				repaint();
 			}

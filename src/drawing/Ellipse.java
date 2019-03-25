@@ -11,6 +11,7 @@ public class Ellipse extends ShapeA{
 	
 	@Override
 	public void draw() {
+		if(start==null)return;
 		this.ellipse.setFrame(Math.min(start.getX(), end.getX()), Math.min(start.getY(), end.getY()),
 				Math.abs(end.getX()-start.getX()), Math.abs(end.getY()-start.getY()));
 		g2d.setStroke(dotline);
@@ -19,6 +20,7 @@ public class Ellipse extends ShapeA{
 
 	@Override
 	public void drawComplete() {
+		this.start = null;
 		drawed.drawComplete(ellipse);
 		this.ellipse = new Ellipse2D.Double();
 	}

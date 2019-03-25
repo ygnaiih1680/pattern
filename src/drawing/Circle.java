@@ -11,6 +11,7 @@ public class Circle extends ShapeA {
 
 	@Override
 	public void draw() {
+		if(start==null)return;
 		double width = Math.max(Math.abs(end.getX()-start.getX()), Math.abs(end.getY()-start.getY()));
 		this.circle.setFrame(Math.min(start.getX(), end.getX()), Math.min(start.getY(), end.getY()),
 				width, width);
@@ -20,6 +21,7 @@ public class Circle extends ShapeA {
 
 	@Override
 	public void drawComplete() {
+		this.start = null;
 		drawed.drawComplete(circle);
 		this.circle = new Ellipse2D.Double();
 	}
