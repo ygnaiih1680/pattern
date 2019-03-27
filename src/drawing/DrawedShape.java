@@ -39,23 +39,23 @@ public class DrawedShape {
 				if (temp.contains(point))
 					return new Cursor(Cursor.MOVE_CURSOR);
 			}
+			switch (pointindex % 5) {
+			case 0:
+				return new Cursor(Cursor.NW_RESIZE_CURSOR);
+			case 1:
+				return new Cursor(Cursor.NE_RESIZE_CURSOR);
+			case 2:
+				return new Cursor(Cursor.SW_RESIZE_CURSOR);
+			case 3:
+				return new Cursor(Cursor.SE_RESIZE_CURSOR);
+			case 4:
+				return new Cursor(Cursor.HAND_CURSOR);
+			default:
+				return new Cursor(Cursor.CROSSHAIR_CURSOR);
+			}
 		}
-		switch (pointindex % 5) {
-		case 0:
-			return new Cursor(Cursor.NW_RESIZE_CURSOR);
-		case 1:
-			return new Cursor(Cursor.NE_RESIZE_CURSOR);
-		case 2:
-			return new Cursor(Cursor.SW_RESIZE_CURSOR);
-		case 3:
-			return new Cursor(Cursor.SE_RESIZE_CURSOR);
-		case 4:
-			return new Cursor(Cursor.HAND_CURSOR);
-		default:
-			return new Cursor(Cursor.CROSSHAIR_CURSOR);
-		}
+		return new Cursor(Cursor.CROSSHAIR_CURSOR);
 	}
-	
 
 	public void drawComplete(Shape shape) {
 		if (shape == null)
@@ -65,12 +65,20 @@ public class DrawedShape {
 	}
 
 	public boolean isSelected() {
-		if (selected.size() > 0)
-			return true;
-		return false;
+		return this.isSelected;
 	}
-
+	
+	public boolean selected() {
+		if (selected.size() == 0)
+			return false;
+		return true;
+	}
+	
 	public void moveShape(Point after) {
+		if (selected.size() == 0)
+			return;
+		this.isSelected = false;
+		trans.pointReset();
 		for (Shape sel : selected) {
 			Shape temp = trans.move(sel, before, after);
 			drawed.set(index.get(selected.indexOf(sel)), temp);
@@ -97,6 +105,8 @@ public class DrawedShape {
 	public void startResize(Point after) {
 		if (selected.size() == 0)
 			return;
+		this.isSelected = false;
+		trans.pointReset();
 		double gapx = trans.changedXRatio(before, after, width), gapy = trans.changedYRatio(before, after, height);
 		for (Shape sel : selected) {
 			Shape temp = trans.changeScale(sel, gapx, gapy, this.pointindex);
@@ -105,6 +115,10 @@ public class DrawedShape {
 	}
 
 	public void startRotate(Point after) {
+		if (selected.size() == 0)
+			return;
+		this.isSelected = false;
+		trans.pointReset();
 		for (Shape sel : selected) {
 			double theta = trans.calculateTheta(before, after);
 			Shape temp = trans.rotate(sel,
@@ -113,12 +127,12 @@ public class DrawedShape {
 		}
 	}
 
-	public void drawTrans(Graphics2D g2d, Shape selectArea) {
-		 SelectArea area = new SelectArea(g2d, selectArea);
-		 Thread t = new Thread(area);
-		 t.start();
+	public void drawTrans(Shape selectArea) {	
+		SelectArea area = new SelectArea(selectArea);
+		Thread t = new Thread(area);
+		t.start();
 	}
-
+	
 	public void drawPoint(Graphics2D g2d) {
 		trans.createResizePoint(g2d);
 	}
@@ -164,17 +178,14 @@ public class DrawedShape {
 	}
 
 	private class SelectArea implements Runnable {
-		private Graphics2D g2d;
 		private Shape selectArea;
 
-		public SelectArea(Graphics2D g2d, Shape selectArea) {
-			this.g2d = g2d;
+		public SelectArea(Shape selectArea) {
 			this.selectArea = selectArea;
 		}
 
 		@Override
 		public void run() {
-			trans = new Transform();
 			selected.clear();
 			index.clear();
 			for (Shape shape : drawed) {
@@ -185,7 +196,6 @@ public class DrawedShape {
 					isSelected = true;
 				}
 			}
-			trans.createResizePoint(g2d);
 		}
 	}
 }

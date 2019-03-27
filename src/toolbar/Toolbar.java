@@ -52,7 +52,7 @@ public class Toolbar extends JToolBar{
 		for(Component comp:this.getComponents()) {
 			if(comp instanceof AbstractButton) {
 				AbstractButton button = (AbstractButton) comp;
-				if(button.isSelected())button.doClick();
+				if(button.isSelected()) {button.doClick();break;}
 			}
 		}
 	}

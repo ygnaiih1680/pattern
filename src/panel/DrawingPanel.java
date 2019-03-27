@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
+import drawing.DrawedShape;
 import drawing.PolygonA;
 import drawing.Select;
 import drawing.ShapeA;
@@ -19,10 +20,12 @@ public class DrawingPanel extends JPanel {
 
 	private MouseHandler mouse;
 	private ShapeA shapeA;
-
+	private DrawedShape drawed;
+	
 	public DrawingPanel() {
 		this.setBackground(Color.WHITE);
 		this.mouse = new MouseHandler();
+		this.drawed = new DrawedShape();
 		this.addMouseListener(mouse);
 		this.addMouseMotionListener(mouse);
 		this.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
@@ -30,15 +33,16 @@ public class DrawingPanel extends JPanel {
 
 	public void setType(ShapeA shapeA) {
 		this.shapeA = shapeA;
+		this.shapeA.initialize(drawed);
 	}
 
 	public void draw(Graphics2D g2d) {
-		this.shapeA.draw();
+		this.shapeA.draw(g2d);
 	}
 
 	public void complete() {
+		repaint();
 		this.shapeA.drawComplete();
-		this.shapeA.redraw();
 	}
 
 	public boolean checkNull() {
@@ -50,19 +54,38 @@ public class DrawingPanel extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D) g;
-		this.shapeA.setGraphics2D(g2d);
-		if (this.ready2change()) {
-			if (this.ready2move())
-				this.shapeA.move();
-			else if (this.ready2rotate())
-				this.shapeA.rotate();
-			else if (this.ready2resize())
-				this.shapeA.resize();
+		if (drawed.selected()) {
+			this.changePaint(g2d);
 		} else if (!this.checkNull()) {
-			g2d.setColor(Color.BLACK);
-			this.draw(g2d);
+			this.drawPaint(g2d);
 		}
-		this.shapeA.redraw();
+		this.drawed.redraw(g2d);
+	}
+
+	public void changePaint(Graphics2D g2d) {
+		if(drawed.isSelected()) {drawed.drawPoint(g2d);}
+		if (this.ready2move())
+			this.move();
+		else if (this.ready2rotate())
+			this.rotate();
+		else if (this.ready2resize())
+			this.resize();
+	}
+
+	public void drawPaint(Graphics2D g2d) {
+		this.draw(g2d);
+	}
+
+	public void move() {
+		this.shapeA.move();
+	}
+
+	public void resize() {
+		this.shapeA.resize();
+	}
+
+	public void rotate() {
+		this.shapeA.rotate();
 	}
 
 	public void focusLost() {
@@ -109,6 +132,8 @@ public class DrawingPanel extends JPanel {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			start(e.getPoint());
+			if (shapeA instanceof Select)
+				shapeA.changing();
 		}
 
 		@Override
@@ -118,9 +143,7 @@ public class DrawingPanel extends JPanel {
 				repaint();
 			} else {
 				complete();
-				repaint();
 			}
-
 		}
 
 		@Override
@@ -139,7 +162,7 @@ public class DrawingPanel extends JPanel {
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			if(shapeA instanceof PolygonA) {
+			if (shapeA instanceof PolygonA) {
 				shapeA.setEnd(e.getPoint());
 				repaint();
 			}

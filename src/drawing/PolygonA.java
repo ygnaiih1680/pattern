@@ -1,5 +1,6 @@
 package drawing;
 
+import java.awt.Graphics2D;
 import java.awt.Polygon;
 
 public class PolygonA extends ShapeA {
@@ -10,7 +11,7 @@ public class PolygonA extends ShapeA {
 	}
 
 	@Override
-	public void draw() {
+	public void draw(Graphics2D g2d) {
 		if(start==null)return;
 		if (poly.npoints == 0) {
 			this.poly.addPoint(start.x, start.y);

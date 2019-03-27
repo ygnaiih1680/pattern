@@ -19,6 +19,11 @@ public class Transform {
 		this.points = new ArrayList<Point>();
 		this.isRect = new ArrayList<Boolean>();
 	}
+	
+	public void pointReset() {
+		points.clear();
+		isRect.clear();
+	}
 
 	public void setResizeShape(Shape shape, boolean rect) {
 		isRect.add(rect);
@@ -30,7 +35,8 @@ public class Transform {
 		this.points.add(point);
 		point = new Point((int) shape.getBounds2D().getMaxX(), (int) shape.getBounds2D().getMaxY());
 		this.points.add(point);
-		point = new Point((int) shape.getBounds2D().getCenterX(), (int) (shape.getBounds2D().getCenterY()-shape.getBounds2D().getHeight()/2-30));
+		point = new Point((int) shape.getBounds2D().getCenterX(),
+				(int) (shape.getBounds2D().getCenterY() - shape.getBounds2D().getHeight() / 2 - 50));
 		this.points.add(point);
 	}
 
@@ -57,7 +63,7 @@ public class Transform {
 
 	public int isOnPoint(Point mpoint) {
 		for (Point point : points) {
-			if (mpoint.distance(point) < 3)
+			if (mpoint.distance(point) < 5)
 				return points.indexOf(point);
 		}
 		return -1;
@@ -74,38 +80,42 @@ public class Transform {
 	}
 
 	public Shape changeScale(Shape pSrc, double xratio, double yratio, int poi) {
+		double width = pSrc.getBounds2D().getWidth(), height = pSrc.getBounds2D().getHeight(),
+				x = pSrc.getBounds2D().getX(), y = pSrc.getBounds2D().getY();
 		switch (poi % 5) {
 		case 0:
-			trans.translate(((pSrc.getBounds2D().getX() * (2-xratio))+pSrc.getBounds2D().getWidth()), (pSrc.getBounds2D().getY() * (2-yratio))+pSrc.getBounds2D().getHeight());
-			trans.scale(-(1 - xratio), -(1 - yratio));
+			trans.translate((x * (xratio)) + (width * xratio), (y * (yratio)) + (height * yratio));
+			trans.scale(1-xratio, 1-yratio);
 			break;
 		case 1:
-			trans.translate(pSrc.getBounds2D().getX() * (-xratio), (pSrc.getBounds2D().getY() * (2-yratio))+pSrc.getBounds2D().getHeight());
-			trans.scale(1 + xratio, -(1 - yratio));
+			trans.translate(x * (-xratio), (y * yratio) + (height * yratio));
+			trans.scale(1+xratio, 1-yratio);
 			break;
 		case 2:
-			trans.translate(((pSrc.getBounds2D().getX() * (2-xratio))+pSrc.getBounds2D().getWidth()), pSrc.getBounds2D().getY() * (-yratio));
-			trans.scale(-(1 - xratio), 1 + yratio);
+			trans.translate((x * xratio) + (width * xratio), y * (-yratio));
+			trans.scale(1-xratio, 1+yratio);
+			break;
+		case 3:
+			trans.translate(x * (-xratio), y * (-yratio));
+			trans.scale(1 + xratio, 1 + yratio);
 			break;
 		default:
-			trans.translate(pSrc.getBounds2D().getX() * (-xratio), pSrc.getBounds2D().getY() * (-yratio));
-			trans.scale(1 + xratio, 1 + yratio);
 			break;
 		}
 		Shape temp = trans.createTransformedShape(pSrc);
 		trans = new AffineTransform();
 		return temp;
 	}
-	
+
 	public Shape move(Shape pSrc, Point before, Point after) {
-		trans.translate(after.getX()-before.getX(), after.getY()-before.getY());
+		trans.translate(after.getX() - before.getX(), after.getY() - before.getY());
 		Shape temp = trans.createTransformedShape(pSrc);
 		trans = new AffineTransform();
 		return temp;
 	}
-	
+
 	public double calculateTheta(Point before, Point after) {
-		double y = after.getY()-before.getY(), x = after.getX()-before.getX();
+		double y = after.getY() - before.getY(), x = after.getX() - before.getX();
 		return Math.atan2(y, x);
 	}
 

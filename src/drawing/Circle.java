@@ -1,5 +1,6 @@
 package drawing;
 
+import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 
 public class Circle extends ShapeA {
@@ -10,7 +11,7 @@ public class Circle extends ShapeA {
 	}
 
 	@Override
-	public void draw() {
+	public void draw(Graphics2D g2d) {
 		if(start==null)return;
 		double width = Math.max(Math.abs(end.getX()-start.getX()), Math.abs(end.getY()-start.getY()));
 		this.circle.setFrame(Math.min(start.getX(), end.getX()), Math.min(start.getY(), end.getY()),

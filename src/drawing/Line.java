@@ -1,5 +1,6 @@
 package drawing;
 
+import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 
 public class Line extends ShapeA{
@@ -10,7 +11,7 @@ public class Line extends ShapeA{
 	}
 
 	@Override
-	public void draw() {
+	public void draw(Graphics2D g2d) {
 		if(start==null)return;
 		this.line.setLine(start.getX(), start.getY(), end.getX(), end.getY());
 		g2d.setStroke(dotline);
@@ -25,9 +26,6 @@ public class Line extends ShapeA{
 	}
 
 	@Override
-	public void addPoint() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void addPoint() {}
 	
 }

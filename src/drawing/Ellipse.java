@@ -1,5 +1,6 @@
 package drawing;
 
+import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 
 public class Ellipse extends ShapeA{
@@ -10,7 +11,7 @@ public class Ellipse extends ShapeA{
 	}
 	
 	@Override
-	public void draw() {
+	public void draw(Graphics2D g2d) {
 		if(start==null)return;
 		this.ellipse.setFrame(Math.min(start.getX(), end.getX()), Math.min(start.getY(), end.getY()),
 				Math.abs(end.getX()-start.getX()), Math.abs(end.getY()-start.getY()));

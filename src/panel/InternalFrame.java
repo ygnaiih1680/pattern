@@ -1,7 +1,6 @@
 package panel;
 
 import java.awt.Color;
-import java.awt.ComponentOrientation;
 import java.awt.event.FocusListener;
 
 import javax.swing.BorderFactory;
